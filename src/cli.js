@@ -5,23 +5,27 @@
 //     - https://github.com/facebook/metro/issues/1#issuecomment-346502388
 //     - https://github.com/facebook/metro/issues/1#issuecomment-334546083
 
+/* eslint-disable no-console */
+
 const fs = require('fs')
 const exec = require('child_process').execSync
 const dedent = require('dedent-js')
 const getSymlinkedDependencies = require('./getSymlinkedDependencies')
 const getMetroConfig = require('./getMetroConfig')
 
-const CONFIG_FILENAME = 'rn-cli.config.js'
+const DEFAULT_CONFIG_FILENAME = 'rn-cli.config.js'
 
 const mapDep = dep => `    - ${dep}`
 
 module.exports = (cwd, command, flags) => {
+    const outputFile = process.env.OUTPUT_FILE || DEFAULT_CONFIG_FILENAME
+
     const symlinkedDependencies = getSymlinkedDependencies(cwd)
 
     const packagesString = symlinkedDependencies.map(mapDep).join('\n')
 
     const config = getMetroConfig(symlinkedDependencies)
-    fs.writeFileSync(CONFIG_FILENAME, config)
+    fs.writeFileSync(outputFile, config)
 
     if (!symlinkedDependencies || symlinkedDependencies.length === 0) {
         console.log(dedent`
@@ -40,14 +44,14 @@ module.exports = (cwd, command, flags) => {
         `)
     } else {
         console.log(dedent`
-            wrote ${CONFIG_FILENAME} - https://github.com/MrLoh/metro-with-symlinks
+            wrote ${outputFile} - https://github.com/MrLoh/metro-with-symlinks
         `)
     }
 
     if (!command) process.exit()
 
     exec(
-        `node node_modules/react-native/local-cli/cli.js ${command} --config ../../../../${CONFIG_FILENAME} ${flags}`,
+        `node node_modules/react-native/local-cli/cli.js ${command} --config ../../../../${outputFile} ${flags}`,
         { stdio: [0, 1, 2] },
     )
 }
