@@ -40,11 +40,11 @@ module.exports = (cwd, command, flags) => {
 
     if (command) {
         console.log(dedent`
-            using metro-with-symlinks - https://github.com/MrLoh/metro-with-symlinks
+            using metro-with-symlinks - https://github.com/substantial/metro-with-symlinks
         `)
     } else {
         console.log(dedent`
-            wrote ${outputFile} - https://github.com/MrLoh/metro-with-symlinks
+            wrote ${outputFile} - https://github.com/substantial/metro-with-symlinks
         `)
     }
 
