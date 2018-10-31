@@ -22,6 +22,6 @@ const getSymlinkedDependencies = directory => {
 }
 
 getSymlinkedDependenciesExternal = dir =>
-    getSymlinkedDependencies(dir, true).slice(0, -1)
+    getSymlinkedDependencies(dir).slice(0, -1)
 
 module.exports = getSymlinkedDependenciesExternal

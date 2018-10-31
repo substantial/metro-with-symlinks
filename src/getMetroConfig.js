@@ -35,18 +35,33 @@ module.exports = symlinkedDependenciesPaths => {
 
     const peerDepsOfSymlinkedDeps = unique(flatten(rawPeerDeps))
 
+    const defaultBlacklistedDeps = ['react', 'react-native']
+
     const peerDepsOfSymlinkedDepsWithPaths = unique(
         flatten(
             rawPeerDeps.map((depsList, i) =>
-                depsList.map(
-                    dep =>
-                        `${symlinkedDependenciesPaths[i]}/node_modules/${dep}`,
-                ),
+                depsList
+                    .map(
+                        dep =>
+                            `${
+                                symlinkedDependenciesPaths[i]
+                            }/node_modules/${dep}`,
+                    )
+                    .concat(
+                        defaultBlacklistedDeps.map(
+                            dep =>
+                                `${
+                                    symlinkedDependenciesPaths[i]
+                                }/node_modules/${dep}`,
+                        ),
+                    ),
             ),
         ),
     )
 
-    const extraNodeModules = peerDepsOfSymlinkedDeps
+    const extraNodeModules = unique(
+        peerDepsOfSymlinkedDeps.concat(defaultBlacklistedDeps),
+    )
         .map(mapModule)
         .join(',\n  ')
 
@@ -86,8 +101,5 @@ module.exports = symlinkedDependenciesPaths => {
             getProjectRoots: () => [path.resolve(__dirname)].concat(watchFolders)
           };
       }
-
-
-
    `
 }
